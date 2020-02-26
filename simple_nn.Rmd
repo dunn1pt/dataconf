@@ -1,0 +1,82 @@
+---
+title: "R Notebook"
+output:
+  word_document: default
+  html_notebook: default
+---
+Paul Dunn
+Business Information Systems
+dunn1pt@cmich.edu
+Let's use a neural network to solve a simple linear model. This is to help you see a Neural Network as a "universal function approximator"
+
+Remember that linear models take the form:
+y=mx+b
+so let's just make one up:
+y=2.3x + 1.1
+
+```{r echo=FALSE, warning=FALSE}
+
+
+# create some Data, here are the X values
+mydata  <- data.frame(x=sample(1:10, 50, replace=TRUE),y=0)
+
+#now we generate the Y values based on our formula 2.3x+1.1
+mydata$y <- with(mydata,2.3*x+1.1)
+
+# Random sampling
+samplesize = 0.65 * nrow(mydata)
+# this will be a 64/35 split for training/testing data
+set.seed(80)
+index = sample( seq_len ( nrow ( mydata ) ), size = samplesize )
+
+# Create training and test set
+datatrain = mydata[ index, ]
+datatest = mydata[ -index, ]
+```
+
+Let's Plot the data:
+```{r}
+library(ggplot2)
+myplot <-ggplot(data=mydata, aes(x=x, y=y)) + geom_point()
+myplot
+```
+
+Normally, the data needs to be normalized for the NN to work correctly. this means that we have to "squash" all of the data, no matter what it is, to be either between 0 and 1 or -1 and 1. There are many ways to do this, here we use min/max
+
+BUT I want to show you how the network comes very close to our original formula, so we'll skip this step
+```{r}
+## normalize data for neural network
+
+max = apply(mydata , 2 , max)
+min = apply(mydata, 2 , min)
+scaled = as.data.frame(scale(mydata, center = min, scale = max - min))
+```
+
+Let's setup our neural network. 
+```{r}
+## Fit neural network 
+
+# load library
+library(neuralnet)
+
+# creating training and test set
+trainNN = mydata[index , ]
+testNN = mydata[-index , ]
+
+# fit neural network
+#this line shows that we want to predict y based on x with no hidden layers (essentially a single neuron perceptron)
+set.seed(42)
+NN = neuralnet(y ~ x, trainNN, hidden = 0 ,linear.output = T )
+
+# plot neural network
+#this doesn't do anything other than to show us what the model looks like
+plot(NN)
+
+```
+
+you can see that the neural network came up with a weight of 2.299 and a bias of 1.101. So the NN predicts:
+y = 2.299X + 1.101
+which is very close to our original formula of
+y=2.3X + 1.1
+
+
