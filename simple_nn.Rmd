@@ -79,4 +79,47 @@ y = 2.299X + 1.101
 which is very close to our original formula of
 y=2.3X + 1.1
 
+Let's try with two variables:
 
+```{r echo=FALSE, warning=FALSE}
+
+
+# create some Data, here are the X1,x2 values
+mydata2 <- data.frame(x=sample(1:10, 50, replace=TRUE),x2=sample(1:10, 50, replace=TRUE),y=0)
+
+#now we generate the Y values based on our formula 0.75X+1.42X2-0.9
+mydata2$y <- with(mydata2,.75*x+1.42*x2-.9)
+
+# Random sampling
+samplesize = 0.65 * nrow(mydata2)
+# this will be a 64/35 split for training/testing data
+set.seed(80)
+index = sample( seq_len ( nrow ( mydata2 ) ), size = samplesize )
+
+# Create training and test set
+datatrain = mydata2[ index, ]
+datatest = mydata2[ -index, ]
+```
+Skipping normalization again.
+Create NN
+Let's setup our neural network. 
+```{r}
+## Fit neural network 
+#library(neuralnet)
+
+# creating training and test set
+trainNN2 = mydata2[index , ]
+testNN2 = mydata2[-index , ]
+
+# fit neural network
+#this line shows that we want to predict y based on x with no hidden layers (essentially a single neuron perceptron)
+set.seed(42)
+NN2 = neuralnet(y ~ ., trainNN2, hidden = 0 ,linear.output = T )
+
+# plot neural network
+#this doesn't do anything other than to show us what the model looks like
+plot(NN2)
+
+```
+
+Again, we can see that the neural network is very close to our original formula, but not exact. And that's fine
