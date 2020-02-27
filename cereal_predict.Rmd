@@ -125,7 +125,7 @@ for(j in 10:65){
 }
 
 Matrix.RMSE = do.call(cbind, List)
-boxplot(Matrix.RMSE[,56], ylab = "RMSE", main = "RMSE BoxPlot (length of traning set = 60)")
+boxplot(Matrix.RMSE[,56], ylab = "RMSE", main = "RMSE BoxPlot (length of traning set = 65)")
 ```
 Make a prediction and then de-normalize it back to a number we expect:
 ```{r}
@@ -139,13 +139,14 @@ How did our prediction change after running K crossvalidation? Do you think it's
 Let's look at how RMSE changes with how big the training set is:
 ```{r}
 ## Variation of median RMSE 
-install.packages("matrixStats")
+#install.packages("matrixStats")
 library(matrixStats)
 
 med = colMedians(Matrix.RMSE)
 
 X = seq(10,65)
 
-plot (med~X, type = "l", xlab = "length of training set", ylab = "median RMSE", main = "Variation of RMSE with length of training set")`
+plot (med~X, type = "l", xlab = "size of training set", ylab = "median RMSE", main = "Variation of RMSE with size of training set")
 ```
+
 
